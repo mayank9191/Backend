@@ -118,13 +118,13 @@ const loginUser = asyncHandler(async (req, res) => {
   // if match take password and bcrypt compare it with hashed password if right give access token and refresh token
   // send cookies
 
-  const { email, username, password } = req.body
+  const { username, email, password } = req.body
 
-  if (!email || !username) {
+  console.log(email, password)
+
+  if (!(email || username)) {
     throw new ApiError(400, "username or email is required")
   }
-
-
 
   const user = await User.findOne({
     $or: [{ username }, { email }]
@@ -160,22 +160,12 @@ const loginUser = asyncHandler(async (req, res) => {
       },
         "User loggedIn Successfully")
     )
-
-
-
-
-
-
-
-
-
-
-
-
-
 })
 
 const logoutUser = asyncHandler(async (req, res) => {
+
+  // To logout user we first want to check whether user is authenticated or not then we delete the refresh token from database to logout and also clear cookies
+
   await User.findByIdAndUpdate(
     req.user._id,
     {
