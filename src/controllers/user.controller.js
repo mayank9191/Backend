@@ -242,7 +242,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 const changeCurrentPassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body
 
-  if (!oldPassword && !newPassword) {
+  if (!(oldPassword || newPassword)) {
     throw new ApiError(400, "password is  not correct")
   }
 
@@ -270,7 +270,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(200, user, "current user fetched successfully")
+    .json(new ApiResponse(200, user, "current user fetched successfully"))
 }
 )
 
@@ -279,16 +279,16 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullName, email } = req.body
 
-  if (!fullName || !email) {
-    throw new ApiError(400, "All fields are required")
+  if (!(email || fullName)) {
+    throw new ApiError(400, "username or email is required")
   }
 
-  const user = User.findByIdAndUpdate(
-    res.user?._id,
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
     {
       $set: {
-        fullName,
-        email
+        fullName: fullName,
+        email: email
       }
     },
     {
@@ -305,7 +305,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 // update avatar image
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
-  const avatarLocalPath = res.files?.path
+  const avatarLocalPath = req.file?.path
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "file is not uploaded")
@@ -330,12 +330,12 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(200, user, "user avatar is updated")
+    .json(new ApiResponse(200, user, "user avatar is updated"))
 })
 
 // update cover image
 const updateUserCoverImage = asyncHandler(async (req, res) => {
-  const coverImageLocalPath = res.files?.path
+  const coverImageLocalPath = req.file?.path
 
   if (!coverImageLocalPath) {
     throw new ApiError(400, "file is not uploaded")
@@ -360,7 +360,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(200, user, "user cover image is updated")
+    .json(new ApiResponse(200, user, "user cover image is updated"))
 })
 
 
@@ -402,12 +402,12 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         subscriberCount: {
           $size: "$subscribers"
         },
-        channelSubscribedTocount: {
+        channelSubscribedToCount: {
           $size: "$subscribedTo"
         },
         isSubscribed: {
           $cond: {
-            if: { $in: [req.user?._id, "$subscriber.subscriber"] },
+            if: { $in: [req.user?._id, "$subscribers.subscriber"] },
             then: true,
             else: false
           }
@@ -419,7 +419,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         fullName: 1,
         username: 1,
         subscriberCount: 1,
-        channelSubscriberCount: 1,
+        channelSubscribedToCount: 1,
         isSubscribed: 1,
         avatar: 1,
         coverImage: 1,
@@ -428,7 +428,6 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     }
   ])
 
-  console.log(channel)
 
   if (!channel?.length) {
     throw new ApiError(404, "channel does not exists")
