@@ -1,10 +1,9 @@
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { ApiError } from '../utils/apiError.js'
 import { User } from '../models/user.model.js'
-import { uploadonCloudinary } from '../utils/cloudinary.js'
+import { deleteonCloudinary, uploadonCloudinary } from '../utils/cloudinary.js'
 import { ApiResponse } from '../utils/apiResponses.js'
 import jwt from 'jsonwebtoken'
-import { response } from 'express'
 import mongoose from 'mongoose'
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -306,6 +305,9 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
   const avatarLocalPath = req.file?.path
+  const oldAvatarId = req.user.avatar.split("upload/")[1].split("/")[1].split(".")[0]
+
+  // console.log(oldAvatarId)
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "file is not uploaded")
@@ -328,6 +330,8 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
       new: true
     })
 
+  await deleteonCloudinary(oldAvatarId)
+
   return res
     .status(200)
     .json(new ApiResponse(200, user, "user avatar is updated"))
@@ -336,6 +340,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 // update cover image
 const updateUserCoverImage = asyncHandler(async (req, res) => {
   const coverImageLocalPath = req.file?.path
+  const oldCoverImageId = req.user.coverImage.split("upload/")[1].split("/")[1].split(".")[0]
+
+  // console.log(oldCoverImageId)
 
   if (!coverImageLocalPath) {
     throw new ApiError(400, "file is not uploaded")
@@ -357,6 +364,8 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     {
       new: true
     })
+
+  await deleteonCloudinary(oldCoverImageId)
 
   return res
     .status(200)
