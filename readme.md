@@ -62,11 +62,10 @@ I have learned **Express.js, Node.js, and MongoDB**, which are essential technol
 
 ## Project Implementations
 
-- **Basic REST API** → Created a CRUD API using Express and MongoDB.
-- **User Authentication** → Implemented **JWT-based authentication**.
-- **Todo App** → Built a full-stack application using Express.js and MongoDB.
-- **Image Upload System** → Integrated **Multer** and **Cloudinary** for image handling.
-- **User Management System** → Developed full user functionalities including:
+I am building a **YouTube-like platform** with features such as:
+
+- **User Authentication & Management**
+
   - **Register User**
   - **Login User**
   - **Logout User**
@@ -78,29 +77,42 @@ I have learned **Express.js, Node.js, and MongoDB**, which are essential technol
   - **Update User Cover Image**
   - **Get User Channel Profile**
   - **Get User Watch History**
-- **YouTube-like Platform** → Implemented features including:
-  - **Video Upload & Streaming**
-  - **Likes & Dislikes for Videos**
-  - **Comment System for Videos**
-  - **Playlist Creation & Management**
-  - **Tweet-like Feature for User Interaction**
-  - **Live Streaming Support**
+
+- **Video Management**
+
+  - Upload, update, and delete videos
+  - Fetch video details and metadata
+  - Stream videos efficiently
+  - Implement **likes, comments, and views tracking**
+
+- **User Engagement Features**
+
+  - **Likes & Dislikes** on videos and comments
+  - **Playlists** for organizing favorite videos
+  - **Tweets-style posts** for user interactions
+
+- **Live Streaming**
+  - Implementing live video streaming capabilities
+
+---
+
+## Database Model
+
+You can check the complete database model and structure here: [Database Model](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
 
 ---
 
 ## Next Steps
 
-- Implement **real-time features** using **WebSockets**.
-- Learn **GraphQL** for efficient API development.
+- Implement **real-time features** using **WebSockets** for live chat and notifications.
+- Optimize video processing and delivery for **better performance**.
+- Explore **GraphQL** for efficient API development.
 - Deploy applications using **Docker, AWS, and CI/CD pipelines**.
-- Enhance **live streaming functionality** with better scalability and performance.
-- Improve **recommendation algorithm** for personalized content.
-- Implement **AI-based video tagging and moderation**.
 
 ---
 
 ## Conclusion
 
-Learning **Express.js, Node.js, and MongoDB** has provided me with a strong foundation for backend development. I am now comfortable building APIs, managing databases, handling server-side logic, and implementing authentication & file uploads efficiently.
+Learning **Express.js, Node.js, and MongoDB** has provided me with a strong foundation for backend development. I am now comfortable building APIs, managing databases, handling server-side logic, and implementing authentication, file uploads, and media streaming efficiently.
 
 📌 **Excited to build more projects and improve my skills further!** 🚀
