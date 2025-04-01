@@ -78,6 +78,13 @@ I have learned **Express.js, Node.js, and MongoDB**, which are essential technol
   - **Update User Cover Image**
   - **Get User Channel Profile**
   - **Get User Watch History**
+- **YouTube-like Platform** → Implemented features including:
+  - **Video Upload & Streaming**
+  - **Likes & Dislikes for Videos**
+  - **Comment System for Videos**
+  - **Playlist Creation & Management**
+  - **Tweet-like Feature for User Interaction**
+  - **Live Streaming Support**
 
 ---
 
@@ -86,6 +93,9 @@ I have learned **Express.js, Node.js, and MongoDB**, which are essential technol
 - Implement **real-time features** using **WebSockets**.
 - Learn **GraphQL** for efficient API development.
 - Deploy applications using **Docker, AWS, and CI/CD pipelines**.
+- Enhance **live streaming functionality** with better scalability and performance.
+- Improve **recommendation algorithm** for personalized content.
+- Implement **AI-based video tagging and moderation**.
 
 ---
 
