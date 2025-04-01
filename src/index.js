@@ -8,9 +8,11 @@ dotenv.config({
   path: './.env'
 })
 
-
+// To connect database we write an function of connectDB() in db/index.js file and call it here 
 connectDB()
   .then(() => {
+    // The 'app.on()' method in Express.js is used to listen for specific events emitted by the Express application.
+
     app.on("error", (error) => {
       console.log(error)
       throw error
@@ -32,7 +34,7 @@ connectDB()
 
 
 
-
+// To connect a database inside a index.js file 
 /*
 import express from 'express'
 const app = express()

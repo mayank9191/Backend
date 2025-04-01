@@ -1,4 +1,5 @@
 import { Router } from 'express'
+// controllers
 import {
   changeCurrentPassword,
   getCurrentUser,
@@ -12,12 +13,21 @@ import {
   updateUserAvatar,
   updateUserCoverImage
 } from '../controllers/user.controller.js'
+// middlewares
 import { upload } from '../middlewares/multer.middleware.js'
 import { verifyJWT } from '../middlewares/auth.middleware.js'
 
+
+// We make router from Router() from express
 const router = Router()
 
+
+// adding routes to router and defining the HTTP methods for each route
+
+// in HTTP methods like post,get,patch,delete we use eg router.route().post(middleware,...,controller) we can pass n no of middlewares
+
 router.route("/register").post(
+  // from multer instance we defines a middleware to take files from form-data 
   upload.fields([
     {
       name: "avatar",
@@ -33,7 +43,7 @@ router.route("/register").post(
 
 router.route("/login").post(loginUser)
 
-// Secured Routes 
+// Secured Routes required authentication to go and see changes here middleware is 'verifyJWT'
 router.route("/logout").post(verifyJWT, logoutUser)
 
 router.route("/refresh-token").post(refreshAccessToken)

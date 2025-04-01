@@ -6,6 +6,7 @@ import { ApiResponse } from '../utils/apiResponses.js'
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose'
 
+// function to generate acccess token and refresh token by userId
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
 
@@ -29,7 +30,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
   // validation on the user submitted data - not empty
-  // check if user not already exists - check by ussername,email
+  // check if user not already exists - check by username,email
   // check for images, check for avatar
   // upload them to cloudinary, avatar
   // create user object - create entry in db
@@ -86,6 +87,8 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Avatar file is required")
   }
 
+  // creating an user object in database
+
   const user = await User.create({
     fullName: fullName,
     avatar: avatar.url,
@@ -95,6 +98,8 @@ const registerUser = asyncHandler(async (req, res) => {
     username: username.toLowerCase()
   })
 
+  // check if created user created or not
+
   const createdUser = await User.findById(user._id).select("-password")
 
 
@@ -102,9 +107,11 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while registering the user")
   }
 
-  return res.status(201).json(
-    new ApiResponse(201, createdUser, "User registered Successfully")
-  )
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(201, createdUser, "User registered Successfully")
+    )
 
 })
 
@@ -173,6 +180,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
+      // to set new value to a key
       $set: {
         refreshToken: undefined
       }
@@ -372,9 +380,18 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "user cover image is updated"))
 })
 
-
+// IMPORTANT and slight tough due to aggregation pipeline
 
 // get user channel profile
+
+// aggregation pipeline are combined query operation in which new data from a query is considered for next query operations untill project operation
+
+// operations are:
+// $match -> used to find a document or row from database
+// $lookup -> used to do left join operation
+// $addfeilds -> used to add feilds in data obtained after queries
+// $ project -> used to select the feilds to return in {} 
+// pipeline or stages are written inside an array in object format in {}
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
   const { username } = req.params
@@ -387,7 +404,6 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     {
       $match: {
         username: username?.toLowerCase(),
-
       }
     },
     {
@@ -406,14 +422,17 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         as: "subscribedTo"
       }
     },
+    // we need to select from two joined collection
     {
       $addFields: {
         subscriberCount: {
-          $size: "$subscribers"
+          $size: "$subscribers" // principle explained in subscription.model.js
         },
         channelSubscribedToCount: {
           $size: "$subscribedTo"
         },
+
+        // finding user by its id in $subscribers.subscriber feild 
         isSubscribed: {
           $cond: {
             if: { $in: [req.user?._id, "$subscribers.subscriber"] },
@@ -453,10 +472,12 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 const getUserWatchHistory = asyncHandler(async (req, res) => {
   const user = await User.aggregate([
     {
+      // _id is stored in mongoose.ObjectId(req.user?._id) format 
       $match: {
         _id: new mongoose.Types.ObjectId(req.user?._id)
       }
     },
+    // here is nested joines because owner of video is also not related
     {
       $lookup: {
         from: "videos",
@@ -479,6 +500,7 @@ const getUserWatchHistory = asyncHandler(async (req, res) => {
               }]
             }
           },
+          // gets owner details
           {
             $addFields: {
               owner: {
