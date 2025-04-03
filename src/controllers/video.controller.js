@@ -40,7 +40,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     throw new ApiError(501, "Internal Server error while uploading")
   }
 
-  const user = Video.create({
+  const user = await Video.create({
     videoFile: video.url,
     thumbnail: thumbnail.url,
     owner: userId,
@@ -82,6 +82,14 @@ const updateVideo = asyncHandler(async (req, res) => {
 
   const { v } = req.query
 
+  const oldVideo = await Video.findOne({ owner: new mongoose.Types.ObjectId(req.user?._id) })
+
+  if (!oldVideo) {
+    throw new ApiError(404, "video not found or not authorized")
+  }
+
+  console.log(oldVideo)
+
   if (!mongoose.Types.ObjectId.isValid(v)) {
     throw new ApiError(400, "video id missing")
   }
@@ -104,13 +112,6 @@ const updateVideo = asyncHandler(async (req, res) => {
   const video = await uploadonCloudinary(videoLocalPath)
   const thumbnail = await uploadonCloudinary(thumbnailLocalPath)
 
-  const oldVideo = await Video.findById(v)
-
-  if (!oldVideo) {
-    throw new ApiError(404, "video not found")
-  }
-
-  console.log(oldVideo)
 
   const newVideo = await Video.findByIdAndUpdate(v,
     {
@@ -144,11 +145,13 @@ const updateVideo = asyncHandler(async (req, res) => {
 const deleteVideo = asyncHandler(async (req, res) => {
   const { v } = req.query
 
+  if (!await Video.findOne({ owner: new mongoose.Types.ObjectId(req.user?._id) })) {
+    throw new ApiError(403, "not authorized to access")
+  }
+
   if (!mongoose.Types.ObjectId.isValid(v)) {
     throw new ApiError(400, "video id not exist")
   }
-
-  const video = await Video.findById(v)
 
   const deletedVideo = await Video.findByIdAndDelete(v)
 
@@ -156,8 +159,8 @@ const deleteVideo = asyncHandler(async (req, res) => {
     throw new ApiError(404, "video not found")
   }
 
-  await deleteonCloudinary(video.videoFile, "video")
-  await deleteonCloudinary(video.thumbnail)
+  await deleteonCloudinary(deletedVideo.videoFile, "video")
+  await deleteonCloudinary(deletedVideo.thumbnail)
 
   return res
     .status(200)
@@ -170,11 +173,15 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
   const { v } = req.query
   const { status } = req.body
 
+  if (!await Video.findOne({ owner: new mongoose.Types.ObjectId(req.user?._id) })) {
+    throw new ApiError(403, "not authorized to access")
+  }
+
   if (!mongoose.Types.ObjectId.isValid(v)) {
     throw new ApiError(400, "video id not exist")
   }
 
-  if (!status) {
+  if (status === null) {
     throw new ApiError(400, "status not defined")
   }
 
@@ -203,5 +210,4 @@ export {
   updateVideo,
   deleteVideo,
   togglePublishStatus
-
 }
