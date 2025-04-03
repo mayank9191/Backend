@@ -52,14 +52,14 @@ const publishAVideo = asyncHandler(async (req, res) => {
   })
 
   return res.status(200)
-    .json(new ApiResponse(200, "video and thumbnail uploaded", "success"))
+    .json(new ApiResponse(200, user, "video and thumbnail uploaded", "success"))
 
 })
 
 // get video by ID
 const getVideoById = asyncHandler(async (req, res) => {
 
-  const { v } = req?.query
+  const { v } = req.query
 
   if (!mongoose.Types.ObjectId.isValid(v)) {
     throw new ApiError(400, "video id missing")
@@ -130,8 +130,8 @@ const updateVideo = asyncHandler(async (req, res) => {
     }
   )
 
-  //
-  await deleteonCloudinary(oldVideo.videoFile)
+  // every time if i have to delete a video i have to specify resource type
+  await deleteonCloudinary(oldVideo.videoFile, "video")
   await deleteonCloudinary(oldVideo.thumbnail)
 
   return res
@@ -142,12 +142,57 @@ const updateVideo = asyncHandler(async (req, res) => {
 
 // delete a video 
 const deleteVideo = asyncHandler(async (req, res) => {
+  const { v } = req.query
+
+  if (!mongoose.Types.ObjectId.isValid(v)) {
+    throw new ApiError(400, "video id not exist")
+  }
+
+  const video = await Video.findById(v)
+
+  const deletedVideo = await Video.findByIdAndDelete(v)
+
+  if (!deletedVideo) {
+    throw new ApiError(404, "video not found")
+  }
+
+  await deleteonCloudinary(video.videoFile, "video")
+  await deleteonCloudinary(video.thumbnail)
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, deletedVideo, "video deleted successfully"))
 
 })
 
 // switch the publish status (wether true or false)
 const togglePublishStatus = asyncHandler(async (req, res) => {
+  const { v } = req.query
+  const { status } = req.body
 
+  if (!mongoose.Types.ObjectId.isValid(v)) {
+    throw new ApiError(400, "video id not exist")
+  }
+
+  if (!status) {
+    throw new ApiError(400, "status not defined")
+  }
+
+  const updatedVideo = await Video.findByIdAndUpdate(v,
+    {
+      $set: {
+        isPublished: status
+      }
+
+    },
+    {
+      new: true
+    }
+  )
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedVideo, `publish status changed to ${status}`))
 })
 
 
@@ -155,5 +200,8 @@ export {
   publishAVideo,
   getAllVideos,
   getVideoById,
-  updateVideo
+  updateVideo,
+  deleteVideo,
+  togglePublishStatus
+
 }
