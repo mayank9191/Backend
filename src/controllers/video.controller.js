@@ -59,15 +59,84 @@ const publishAVideo = asyncHandler(async (req, res) => {
 // get video by ID
 const getVideoById = asyncHandler(async (req, res) => {
 
-  const { videoID } = req.params
+  const { v } = req?.query
 
+  if (!mongoose.Types.ObjectId.isValid(v)) {
+    throw new ApiError(400, "video id missing")
+  }
 
+  const video = await Video.findById(v)
 
+  if (!video) {
+    throw new ApiError(404, "video not found")
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, video, "video founded"))
 
 })
 
 // update a video stored
 const updateVideo = asyncHandler(async (req, res) => {
+
+  const { v } = req.query
+
+  if (!mongoose.Types.ObjectId.isValid(v)) {
+    throw new ApiError(400, "video id missing")
+  }
+
+  const { title, description, isPublished } = req.body
+
+  if ([title, description, isPublished].some((field) => field === undefined)) {
+    throw new ApiError(400, "details about videop missing")
+  }
+
+  const videoLocalPath = req.files?.video[0]?.path || ""
+  const thumbnailLocalPath = req.files.thumbnail[0].path || ""
+
+  if (!(videoLocalPath || thumbnailLocalPath)) {
+    throw new ApiError(400, "file not found")
+  }
+
+  console.log(videoLocalPath, thumbnailLocalPath)
+
+  const video = await uploadonCloudinary(videoLocalPath)
+  const thumbnail = await uploadonCloudinary(thumbnailLocalPath)
+
+  const oldVideo = await Video.findById(v)
+
+  if (!oldVideo) {
+    throw new ApiError(404, "video not found")
+  }
+
+  console.log(oldVideo)
+
+  const newVideo = await Video.findByIdAndUpdate(v,
+    {
+      $set: {
+        videoFile: video.url || oldVideo.videoFile,
+        thumbnail: thumbnail.url || oldVideo.thumbnail,
+        owner: req.user._id,
+        title: title || oldVideo.title,
+        description: description || oldVideo.description,
+        duration: video.duration || oldVideo.duration,
+        views: oldVideo.views,
+        isPublished: isPublished || oldVideo.isPublished,
+      }
+    },
+    {
+      new: true
+    }
+  )
+
+  //
+  await deleteonCloudinary(oldVideo.videoFile)
+  await deleteonCloudinary(oldVideo.thumbnail)
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, newVideo, "video updated"))
 
 })
 
@@ -83,5 +152,8 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
 
 export {
-  publishAVideo
+  publishAVideo,
+  getAllVideos,
+  getVideoById,
+  updateVideo
 }

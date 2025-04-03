@@ -313,7 +313,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
   const avatarLocalPath = req.file?.path
-  const oldAvatarId = req.user.avatar.split("upload/")[1].split("/")[1].split(".")[0]
+  const oldAvatarUrl = req.user.avatar
 
   // console.log(oldAvatarId)
 
@@ -338,7 +338,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
       new: true
     })
 
-  await deleteonCloudinary(oldAvatarId)
+  await deleteonCloudinary(oldAvatarUrl)
 
   return res
     .status(200)
@@ -348,7 +348,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 // update cover image
 const updateUserCoverImage = asyncHandler(async (req, res) => {
   const coverImageLocalPath = req.file?.path
-  const oldCoverImageId = req.user.coverImage.split("upload/")[1].split("/")[1].split(".")[0]
+  const oldCoverImageUrl = req.user.coverImage
 
   // console.log(oldCoverImageId)
 
@@ -373,7 +373,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
       new: true
     })
 
-  await deleteonCloudinary(oldCoverImageId)
+  await deleteonCloudinary(oldCoverImageUrl)
 
   return res
     .status(200)

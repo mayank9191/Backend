@@ -38,11 +38,16 @@ const uploadonCloudinary = async (localFilePath) => {
 }
 
 // function to delete the previous uploaded file from cloudinay by file publicId
-const deleteonCloudinary = async (publicId) => {
+const deleteonCloudinary = async (url, resourceType = "image") => {
   try {
+
+    if (!url) return null
+
+    const publicId = url.split("upload/")[1].split("/")[1].split(".")[0]
+
     if (!publicId) return null
 
-    const response = await cloudinary.uploader.destroy(publicId)
+    const response = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType })
 
     console.log("previous file is deleted on cloudinary", response);
 
