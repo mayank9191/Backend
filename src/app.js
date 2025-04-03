@@ -30,8 +30,11 @@ app.use(cookieParser())
 // routes
 
 import userRouter from './routes/user.routes.js'
+import videoRouter from './routes/video.routes.js'
 
 
 // routes declaration to mount a router at a specific route prefix.
 app.use("/api/v1/users", userRouter)
+
+app.use("/api/v1/videos", videoRouter)
 export { app }
