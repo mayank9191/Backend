@@ -6,7 +6,7 @@ import { Tweet } from '../models/tweet.model.js'
 
 
 
-// check whether request made by owner 
+// check whether request made by owner and return data founded
 const checkOwner = async (model, findId, userId) => {
   try {
 
@@ -26,19 +26,24 @@ const checkOwner = async (model, findId, userId) => {
 // create tweet
 const createTweet = asyncHandler(async (req, res) => {
   const { content } = req.body
+  const userId = req.user?._id
 
-  if (!content) {
-    throw new ApiError(400, "tweet content not present")
+  if (!userId) {
+    throw new ApiError(403, "not authorized to access")
+  }
+
+  if (!content || typeof content !== "string" || content.trim() === "") {
+    throw new ApiError(400, "Tweet content is required and cannot be empty")
   }
 
   const tweet = await Tweet.create({
-    owner: req.user?._id,
+    owner: userId,
     content: content
   })
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, tweet, "tweet created successfully"))
+    .status(201)
+    .json(new ApiResponse(201, tweet, "tweet created successfully"))
 
 })
 
@@ -52,9 +57,18 @@ const getUserTweets = asyncHandler(async (req, res) => {
 const updateTweet = asyncHandler(async (req, res) => {
   const { content } = req.body
   const { tweetId } = req.params
+  const userId = req.user?._id
 
-  if (!content) {
-    throw new ApiError(400, "tweet content not present")
+  if (!content || typeof content !== "string" || content.trim() === "") {
+    throw new ApiError(400, "tweet content is required and cannot be empty present")
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(tweetId)) {
+    throw new ApiError(400, "Invaild or missing tweet Id")
+  }
+
+  if (!await checkOwner(Tweet, tweetId, userId)) {
+    throw new ApiError(403, "not authorized to access")
   }
 
   const newTweet = await Tweet.findByIdAndUpdate(tweetId,
@@ -81,13 +95,14 @@ const updateTweet = asyncHandler(async (req, res) => {
 const deleteTweet = asyncHandler(async (req, res) => {
 
   const { tweetId } = req.params
-
-  if ((await Tweet.findById(tweetId))?.owner !== req.user?._id) {
-    throw new ApiError(403, "not authorized")
-  }
+  const userId = req.user?._id
 
   if (!mongoose.Types.ObjectId.isValid(tweetId)) {
     throw new ApiError(400, "tweet id not correct")
+  }
+
+  if (!await checkOwner(Tweet, tweetId, userId)) {
+    throw new ApiError(403, "not authorized to access")
   }
 
   const deletedTweet = await Tweet.findByIdAndDelete(tweetId)

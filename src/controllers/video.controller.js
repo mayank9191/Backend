@@ -7,7 +7,7 @@ import { deleteonCloudinary } from "../utils/cloudinary.js";
 import { Video } from '../models/video.model.js'
 
 
-// check whether request made by owner 
+// check whether request made by owner and return data founded
 const checkOwner = async (model, findId, userId) => {
   try {
 
