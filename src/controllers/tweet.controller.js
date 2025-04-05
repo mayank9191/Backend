@@ -35,7 +35,7 @@ const createTweet = asyncHandler(async (req, res) => {
 
   const tweet = await Tweet.create({
     owner: userId,
-    content: content
+    content: content.trim()
   })
 
   return res
@@ -81,7 +81,7 @@ const updateTweet = asyncHandler(async (req, res) => {
   const newTweet = await Tweet.findByIdAndUpdate(tweetId,
     {
       $set: {
-        content: content
+        content: content.trim()
       }
     },
     {

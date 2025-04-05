@@ -37,7 +37,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
   }
 
   const playlist = await Playlist.create({
-    name: name,
+    name: name.trim(),
     description: description,
     owner: userId
   })
@@ -214,8 +214,8 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 
   const updatedPlaylist = await Playlist.findByIdAndUpdate(playlistId, {
     $set: {
-      name: name || oldPlaylist?.name,
-      description: description || oldPlaylist?.description
+      name: name.trim() || oldPlaylist?.name,
+      description: description.trim() || oldPlaylist?.description
     }
   },
     {
