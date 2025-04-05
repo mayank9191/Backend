@@ -41,8 +41,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
   const { title, description, isPublished } = req.body
 
-  if ([title, description].some(field => typeof field === "string" && field.trim() === "") ||
-    (typeof isPublished !== "boolean" && isPublished !== undefined)) {
+  if (!title || !description) {
     throw new ApiError(400, "Enter valid video details");
   }
 
