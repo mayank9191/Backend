@@ -9,15 +9,12 @@ import { Tweet } from '../models/tweet.model.js'
 // check whether request made by owner and return data founded
 const checkOwner = async (model, findId, userId) => {
   try {
-
     const data = await model.findById(findId)
 
     if (!data || String(data.owner) !== String(userId)) {
       return false;
     }
     return data;
-
-
   } catch (error) {
     throw error
   }
@@ -49,7 +46,17 @@ const createTweet = asyncHandler(async (req, res) => {
 
 // get user tweets
 const getUserTweets = asyncHandler(async (req, res) => {
+  const { userId } = req.params
 
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    throw new ApiError(400, "user Id not correct")
+  }
+
+  const userTweets = await Tweet.find({ owner: userId }).sort({ createdAt: -1 }) // sort function gives latest tweets first
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, userTweets, "tweets fetched successfully"))
 
 })
 
