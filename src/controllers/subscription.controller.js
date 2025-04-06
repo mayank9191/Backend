@@ -56,7 +56,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     throw new ApiError(400, "channel id not valid")
   }
 
-  const channelSubscriber = await Subscription.find({ channel: channelId }).select("subscriber _id")
+  const channelSubscriber = await Subscription.find({ channel: channelId }).select("subscriber -_id")
 
   return res
     .status(200)
@@ -74,7 +74,12 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
     throw new ApiError(400, "subscriber id not valid")
   }
 
+  const channelSubscribed = await Subscription.find({ subscriber: subscriberId }).select("channel -_id")
 
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, channelSubscribed, "channels subscribed fetched successfully"))
 
 
 })
