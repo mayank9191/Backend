@@ -20,7 +20,7 @@ const checkOwner = async (model, findId, userId) => {
 // to get all video comments
 const getVideoComments = asyncHandler(async (req, res) => {
 
-  const { videoId } = req.query
+  const { videoId } = req.params
 
   if (!videoId || !mongoose.Types.ObjectId.isValid(videoId)) {
     throw new ApiError(400, "video id is not valid")

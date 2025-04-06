@@ -20,7 +20,7 @@ const router = Router()
 router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
 
 router.route("/create").post(createPlaylist)
-router.route("/").get(getUserPlaylists) // get user playlist
+router.route("/:userId").get(getUserPlaylists) // get user playlist
 router.route("/:playlistId").get(getPlaylistById)
 router.route("/:playlistId/video").post(addVideoToPlaylist)
 router.route("/:playlistId/video/:videoId").delete(removeVideoFromPlaylist)

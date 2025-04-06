@@ -50,7 +50,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
 // get user playlists
 const getUserPlaylists = asyncHandler(async (req, res) => {
-  const userId = req.user?._id
+  const { userId } = req.params
 
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     throw new ApiError(403, "not authorized to access")
