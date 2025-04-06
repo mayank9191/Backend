@@ -77,7 +77,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     {
       $group: {
         _id: null,
-        totalVideoLike:
+        totalVideoLike: null
       }
     }
 
