@@ -75,7 +75,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
       }
     },
     {
-      $lookup: {
+      $lookup: {   // to get all the videos posted by channel and liked by user
         from: "likes",
         localField: "_id",
         foreignField: "video",
@@ -84,7 +84,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     },
     {
       $project: {
-        likesCount: { $size: "$likedVideos" }
+        likesCount: { $size: "$likedVideos" } // getting only likedVideos feild 
       }
     },
     {
