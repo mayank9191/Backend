@@ -26,7 +26,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     {
       $group: { // group all videos founded views and save in totalViews by summing $views feild
         _id: null,
-        totatViews: { $sum: "$views" }
+        totalViews: { $sum: "$views" }
       }
     }
 
@@ -75,24 +75,38 @@ const getChannelStats = asyncHandler(async (req, res) => {
       }
     },
     {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "video",
+        as: "likedVideos"
+      }
+    },
+    {
+      $project: {
+        likesCount: { $size: "$likedVideos" }
+      }
+    },
+    {
       $group: {
         _id: null,
-        totalVideoLike: null
+        totalVideoLikes: {
+          $sum: "$likesCount"
+        }
       }
     }
-
   ])
 
   const channelStats = {
     totalVideoViews: channelTotalVideoViewsAgg[0]?.totatViews || 0,
     totalSubscriberCount: channelTotalSubscriberAgg[0]?.totalSubscriber || 0,
-    totalVideos: channelTotalVideosAgg[0]?.totalVideos || 0
+    totalVideos: channelTotalVideosAgg[0]?.totalVideos || 0,
+    totalVideoLikes: channelTotalVideoLikesAgg[0]?.totalVideoLikes || 0
   }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, channelStats, "total video views fetched successfully"))
-
+    .json(new ApiResponse(200, channelStats, "channel stats fetched successfully"))
 
 })
 
