@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   deleteVideo,
+  getAllVideos,
   getVideoById,
   publishAVideo,
   togglePublishStatus,
@@ -11,6 +12,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router()
 
+router.route("/").get(verifyJWT, getAllVideos)
 router.route("/upload-video").post(
   verifyJWT,
   upload.fields([

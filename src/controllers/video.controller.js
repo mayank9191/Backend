@@ -27,11 +27,92 @@ const checkOwner = async (model, findId, userId) => {
 // get all videos stored
 const getAllVideos = asyncHandler(async (req, res) => {
 
-  const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
+  const {
+    page = 1, // Default page number is 1 if not provided
+    limit = 10, // Default limit per page is 10
+    query = "",  // Default query is an empty string
+    sortBy = "createdAt",  // Default sorting field is :createdAt
+    sortType = "desc",  // Default sorting order is descending
+    userId // User Id (optional to filter videos by a specific user) 
+  } = req.query
 
+  if (!req.user) {
+    throw new ApiError(401, "user needs to be logged in");
+  }
 
+  const match = {
+    ...(query ? { title: { $regex: query, $options: "i" } } : {}), // If query exists, match titles that contain the search term (case-insensitive)
+    ...(userId ? { owner: new mongoose.Types.ObjectId(userId) } : {}), // If userId exists, filter videos by that owner
+  }
 
+  const videos = await Video.aggregate([
+    {
+      $match: match
+    },
+    {
+      $lookup: {
+        from: "user",
+        localField: "owner",
+        foreignField: "_id",
+        as: "videoByOwner"
+      }
 
+    },
+    {
+      /*
+        $project: Selecting only the necessary fields to return in the response
+
+      */
+      $project: {
+        videoFile: 1, // Video file link
+        thumbnail: 1, // Thumbnail image link
+        title: 1, // Video title
+        description: 1, // Video description
+        duration: 1, // Video duration
+        views: 1, // Number of views
+        isPublished: 1, // Whether the video is published or not
+        owner: {
+          $arrayElemAt: ["$videosByOwner", 0], // Extracts the first user object from the array
+        },
+      },
+    },
+
+    {
+      /*
+        $sort: Sorting videos based on the specified field
+        - If sortType is "desc", sort in descending order (-1)
+        - If sortType is "asc", sort in ascending order (1)
+      */
+      $sort: {
+        [sortBy]: sortType === "desc" ? -1 : 1,
+      },
+    },
+
+    {
+      /*
+        $skip: Skipping records for pagination
+        - Formula: (page number - 1) * limit
+        - If page = 2 and limit = 10, skips (2-1) * 10 = 10 records
+      */
+      $skip: (page - 1) * parseInt(limit),
+    },
+
+    {
+      /*
+        $limit: Limits the number of results per page
+        - Ensures that the number of results does not exceed the "limit" value
+      */
+      $limit: parseInt(limit),
+    },
+  ])
+
+  if (!videos?.length) {
+    throw new ApiError(404, "Videos are not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, videos, "Videos fetched successfully"));
 
 })
 
