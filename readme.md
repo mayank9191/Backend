@@ -24,20 +24,20 @@ I have learned **Express.js, Node.js, and MongoDB**, which are essential technol
 
 ## What I Learned
 
-### 🔹 **Node.js**
+### 🔹 Node.js
 
 - Setting up a Node.js project with `npm init`
 - Handling asynchronous operations with **callbacks, promises, and async/await**
 - Working with built-in modules like `fs`, `http`, and `path`
 
-### 🔹 **Express.js**
+### 🔹 Express.js
 
 - Creating a simple Express server
 - Routing: Handling **GET, POST, PUT, DELETE** requests
 - Middleware functions (custom, built-in, third-party like `cors`, `morgan`)
 - Error handling and custom error classes
 
-### 🔹 **MongoDB & Mongoose**
+### 🔹 MongoDB & Mongoose
 
 - Connecting Node.js to MongoDB using Mongoose
 - CRUD operations (Create, Read, Update, Delete)
@@ -46,14 +46,14 @@ I have learned **Express.js, Node.js, and MongoDB**, which are essential technol
 - Storing data on **MongoDB Atlas (Cloud Database Service)**
 - Implementing **Aggregation Pipeline** for advanced data processing
 
-### 🔹 **Authentication & Security**
+### 🔹 Authentication & Security
 
 - User authentication using **JWT (JSON Web Tokens)**
 - Hashing passwords using **Bcrypt**
 - Handling cookies using **Cookie Parser**
 - Managing CORS policies with **CORS middleware**
 
-### 🔹 **File Upload & Storage**
+### 🔹 File Upload & Storage
 
 - Uploading and handling images using **Multer**
 - Storing and serving images using **Cloudinary**
@@ -64,41 +64,50 @@ I have learned **Express.js, Node.js, and MongoDB**, which are essential technol
 
 I am building a **YouTube-like platform** with features such as:
 
-- **User Authentication & Management**
+### 🔐 User Authentication & Management
 
-  - **Register User**
-  - **Login User**
-  - **Logout User**
-  - **Refresh Access Token**
-  - **Change Current Password**
-  - **Get Current User**
-  - **Update Account Details**
-  - **Update User Avatar**
-  - **Update User Cover Image**
-  - **Get User Channel Profile**
-  - **Get User Watch History**
+- Register User
+- Login User
+- Logout User
+- Refresh Access Token
+- Change Current Password
+- Get Current User
+- Update Account Details
+- Update User Avatar
+- Update User Cover Image
+- Get User Channel Profile
+- Get User Watch History
 
-- **Video Management**
+### 📹 Video Management
 
-  - Upload, update, and delete videos
-  - Fetch video details and metadata
-  - Stream videos efficiently
-  - Implement **likes, comments, and views tracking**
+- Upload, update, and delete videos
+- Fetch video details and metadata
+- Stream videos efficiently
+- Implement **likes, comments, and views tracking**
 
-- **User Engagement Features**
+### 💬 User Engagement Features
 
-  - **Likes & Dislikes** on videos and comments
-  - **Playlists** for organizing favorite videos
-  - **Tweets-style posts** for user interactions
+- **Likes & Dislikes** on videos and comments
+- **Playlists** for organizing favorite videos
+- **Tweets-style posts** for user interactions
 
-- **Live Streaming**
-  - Implementing live video streaming capabilities
+### 🔴 Live Streaming
+
+- Implementing live video streaming capabilities
+
+---
+
+## API Documentation
+
+You can explore the full **Postman API collection** with request and response examples here:  
+🔗 [Postman API Documentation](https://documenter.getpostman.com/view/40884675/2sB2cVeMHV)
 
 ---
 
 ## Database Model
 
-You can check the complete database model and structure here: [Database Model](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
+You can check the complete database model and structure here:  
+📘 [Database Model](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
 
 ---
 
